@@ -59,7 +59,12 @@ abstract class SinglyLinkedIntList extends IntList {
     * Beleg 1
     */
 
-  override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int = ???
+  override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int =this match {
+
+      case Empty =>initial
+      case Cons(_, _) => ???
+    }
+
 
   override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = ???
 

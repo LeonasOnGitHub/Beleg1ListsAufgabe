@@ -1,4 +1,5 @@
 package list.implementation
+
 import list.traits.IntList
 
 /**
@@ -59,16 +60,21 @@ abstract class SinglyLinkedIntList extends IntList {
     * Beleg 1
     */
 
-  override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int =this match {
+  override def foldRight(initial: Int)(reduceFunc: (Int, Int) => Int): Int = this match {
 
-      case Empty =>initial
-      case Cons(_, _) => ???
-    }
+    case Empty => initial
+    case Cons(_, _) => reduceFunc(head, tail.foldRight(initial)(reduceFunc))
+  }
 
+  override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = this match {
+    case Empty => 0
+    case Cons(_, _) => tail.foldLeft(head)(reduceFunc)
+  }
 
-  override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = ???
-
-  override def reduceRight(reduceFunc: (Int, Int) => Int): Int = ???
+  override def reduceRight(reduceFunc: (Int, Int) => Int): Int = this match {
+    case Empty => 0
+    case Cons(_, _) => reduceFunc(head, tail.reduceRight(reduceFunc))
+  }
 
   override def forAll(predicateFunc: Int => Boolean): Boolean = ???
 

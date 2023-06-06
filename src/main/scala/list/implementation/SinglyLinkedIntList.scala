@@ -75,8 +75,24 @@ abstract class SinglyLinkedIntList extends IntList {
     case Empty => 0
     case Cons(_, _) => reduceFunc(head, tail.reduceRight(reduceFunc))
   }
+/*
+  override def forAll(predicateFunc: Int => Boolean): Boolean = {
+    def checkRecursive(lst: IntList): Boolean = lst match {
+      case Empty => true
+      case Cons(_, _) =>
+        if (!predicateFunc(head)) false
+        else checkRecursive(tail)
+    }
 
-  override def forAll(predicateFunc: Int => Boolean): Boolean = ???
+    checkRecursive(this)
+  }
+*/
+  override def forAll(predicateFunc: Int => Boolean): Boolean =this match {
+    case Empty => true
+    case Cons(_, _) =>
+      if (!predicateFunc(head)) false
+      else tail.forAll(predicateFunc)
+  }
 
   override def insertSorted(elem: Int): IntList = ???
 

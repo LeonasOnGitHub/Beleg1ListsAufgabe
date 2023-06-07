@@ -16,7 +16,7 @@ class Processing {
      * 2. Shifts all words to lower case
      * 3. Extracts all words and put them into a list of strings
      */
-    ???
+    line.replaceAll("\\d+", "").toLowerCase().split("\\W+").toList
   }
   
   def getAllWords(l:List[(Int,String)]):List[String]={
@@ -26,14 +26,16 @@ class Processing {
      * 
      * Hint: Use the flatMap function
      */
-     ???
+    l.flatMap(x => getWords(x._2)).filter(s => s.nonEmpty)
   }
   
   def countWords(l:List[String]):List[(String,Int)]={
     /*
      *  Gets a list of words and counts the occurrences of the individual words
      */
-    ???
+    l.groupBy(identity)
+      .map { case (word, occurrences) => (word, occurrences.length) }
+      .toList
   }
 
   /**********************************************************************************************
@@ -43,7 +45,9 @@ class Processing {
    *********************************************************************************************
   */
 
-  def getAllWordsWithIndex(l: List[(Int, String)]): List[(Int, String)] = ???
+  def getAllWordsWithIndex(l: List[(Int, String)]): List[(Int, String)] = {
+    l.flatMap(x => getWords(x._2).filter(s => s.nonEmpty).map(i=> (x._1, i)))
+  }
 
   def createInverseIndex(l: List[(Int, String)]): Map[String, List[Int]] = ???
 

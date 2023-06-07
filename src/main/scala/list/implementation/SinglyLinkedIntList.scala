@@ -67,34 +67,32 @@ abstract class SinglyLinkedIntList extends IntList {
   }
 
   override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = this match {
-    case Empty => 0
-    case Cons(_, _) => tail.foldLeft(head)(reduceFunc)
+    case Empty => head
+    case Cons(_, Empty) => head
+    case Cons(_,Cons(_, _)) => Cons(reduceFunc(head,tail.head), tail.tail).reduceLeft(reduceFunc)
   }
 
   override def reduceRight(reduceFunc: (Int, Int) => Int): Int = this match {
     case Empty => 0
     case Cons(_, _) => reduceFunc(head, tail.reduceRight(reduceFunc))
   }
-/*
-  override def forAll(predicateFunc: Int => Boolean): Boolean = {
-    def checkRecursive(lst: IntList): Boolean = lst match {
-      case Empty => true
-      case Cons(_, _) =>
-        if (!predicateFunc(head)) false
-        else checkRecursive(tail)
-    }
 
-    checkRecursive(this)
-  }
-*/
-  override def forAll(predicateFunc: Int => Boolean): Boolean =this match {
+  override def forAll(predicateFunc: Int => Boolean): Boolean = this match {
     case Empty => true
     case Cons(_, _) =>
       if (!predicateFunc(head)) false
       else tail.forAll(predicateFunc)
   }
 
-  override def insertSorted(elem: Int): IntList = ???
+  override def insertSorted(elem: Int): IntList = this match {
+    case Empty => SinglyLinkedIntList(elem)
+    case Cons(_, _) =>
+      if (head < elem) Cons(head, tail.insertSorted(elem))
+      else Cons(elem, this)
+  }
 
-  override def insertionSort: IntList = ???
+  override def insertionSort: IntList = this match {
+    case Empty => Empty
+    case Cons(_, _) => tail.insertionSort.insertSorted(head)
+  }
 }

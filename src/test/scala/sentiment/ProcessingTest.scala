@@ -90,7 +90,7 @@ class ProcessingTest extends AnyFunSuite{
     
     new teststrings{
     
-       val result= proc.createInverseIndex(proc.getAllWordsWithIndex(test_list))
+       val result = proc.createInverseIndex(proc.getAllWordsWithIndex(test_list))
        assert (result===inverseIndex)
     }
   }

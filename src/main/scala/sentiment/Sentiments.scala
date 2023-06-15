@@ -26,11 +26,47 @@ class Sentiments(sentiFile: String) {
     * ********************************************************************************************
     */
 
-  def getDocumentGroupedByCounts(filename: String, wordCount: Int): List[(Int, List[String])] = ???
+  def getDocumentGroupedByCounts(filename: String, wordCount: Int): List[(Int, List[String])] = {
+    val input = getTextFileInputAsListOfString(filename)
 
-  def getDocumentSplitByPredicate(filename: String, predicate:String=>Boolean): List[(Int, List[String])] = ???
+    def split(ll: List[String], count: Int): List[(Int, List[String])] = ll.splitAt(wordCount) match {
+      case (x,Nil) => List((count,x))
+      case (x,xs) => (count, x) :: split(xs, count+1)
+    }
+    split(input,1)
+  }
 
-  def analyseSentiments(l: List[(Int, List[String])]): List[(Int, Double, Double)] = ???
+  def getDocumentSplitByPredicate(filename: String, predicate:String=>Boolean): List[(Int, List[String])] = {
+    val url = getClass.getResource("/" + filename).getPath
+    val src = scala.io.Source.fromFile(url).toList.mkString
+    val in = getWordsNoLowerCase(src)
+
+    def split(ll: List[String], count: Int): List[(Int, List[String])] = {
+      val l = ll.dropWhile(!predicate(_)).dropWhile(predicate)
+      l match{
+        case Nil => Nil
+        case _ =>
+          (count, l.takeWhile(!predicate(_)).map(x => x.toLowerCase).foldLeft(List[String]()){
+            (list, words) => list.appended(words)
+          }) :: split(l, count+1)
+      }
+    }
+
+    split(in, 1)
+  }
+
+
+  def analyseSentiments(l: List[(Int, List[String])]): List[(Int, Double, Double)] = l match{
+    case Nil => Nil
+    case x::xs =>
+      val knownWords = x._2.flatMap(word => sentiments.get(word));
+      (
+        x._1 - 1,
+        knownWords.reduceLeft((a,b) => a + b).toDouble / knownWords.size,
+        knownWords.size.toDouble / x._2.size.toDouble
+      ) :: analyseSentiments(xs)
+  }
+
 
   /** ********************************************************************************************
     *
@@ -101,5 +137,14 @@ class Sentiments(sentiFile: String) {
     System.in.read()
     frame.setVisible(false)
     frame.dispose
+  }
+  def getTextFileInputAsListOfString(filename: String): List[String] = {
+    val url = getClass.getResource("/" + filename).getPath
+    val src = scala.io.Source.fromFile(url)
+    proc.getWords(src.getLines().toList.mkString("\n"))
+  }
+  def getWordsNoLowerCase(line:String):List[String]={
+    line.map(char => if(!char.isLetter)  " " else char).mkString
+      .split("\\s+").toList
   }
 }

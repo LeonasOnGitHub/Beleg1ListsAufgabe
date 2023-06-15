@@ -73,7 +73,7 @@ abstract class SinglyLinkedIntList extends IntList {
   }
 
   override def reduceRight(reduceFunc: (Int, Int) => Int): Int = this match {
-    case Empty => 0
+    case Cons(_, Empty) => head
     case Cons(_, _) => reduceFunc(head, tail.reduceRight(reduceFunc))
   }
 
